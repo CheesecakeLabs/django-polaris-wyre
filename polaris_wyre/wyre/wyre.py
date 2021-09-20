@@ -3,6 +3,9 @@ from typing import Tuple
 from polaris_wyre.wyre.dtos import TransferData
 from .api import TEST_BASE_URL, WyreAPI
 
+COMPLETED_STATUS = "COMPLETED"
+FAILED_STATUS = "FAILED"
+
 
 # TODO: add methods description
 class Wyre:
@@ -21,10 +24,10 @@ class Wyre:
         transfer_is_completed = False
         while not transfer_is_completed:
             response_data = self.wyre_api.get_transfer_by_id(transfer_id)
-            if response_data["status"] == "FAILED":
+            if response_data["status"] == FAILED_STATUS:
                 # TODO: improve RuntimeError message with a better description
                 raise RuntimeError("Wyre failed to complete the transfer.")
-            if response_data["status"] == "COMPLETED":
+            if response_data["status"] == COMPLETED_STATUS:
                 transfer_is_completed = True
         return response_data["blockchainTx"]["networkTxId"]
 
