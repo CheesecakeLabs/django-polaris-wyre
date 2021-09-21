@@ -25,14 +25,14 @@ def test_get_account_success(mocker, make_wyre_api):
     )
 
     wyre_api = make_wyre_api()
-    response = wyre_api.get_account()
+    response_data = wyre_api.get_account()
 
     wyre_request_mock.assert_called_once_with(
         urljoin(wyre_api.API_URL, "v2/account"),
     )
 
-    assert response == wyre_request_mock.return_value.json()
-    assert settings.WYRE_ACCOUNT_ID == response["id"]
+    assert response_data == wyre_request_mock.return_value.json()
+    assert settings.WYRE_ACCOUNT_ID == response_data["id"]
 
 
 def test_get_account_unauthorized(mocker, make_wyre_api):
@@ -69,15 +69,15 @@ def test_get_transfer_by_id_success(mocker, make_wyre_api):
     )
 
     wyre_api = make_wyre_api()
-    response = wyre_api.get_transfer_by_id(transfer_id=transfer_id)
+    response_data = wyre_api.get_transfer_by_id(transfer_id=transfer_id)
 
     wyre_request_mock.assert_called_once_with(
         urljoin(wyre_api.API_URL, f"v3/transfers/{transfer_id}"),
     )
 
-    assert response == wyre_request_mock.return_value.json()
-    assert f"account:{settings.WYRE_ACCOUNT_ID}" == response["source"]
-    assert response["id"] == transfer_id
+    assert response_data == wyre_request_mock.return_value.json()
+    assert f"account:{settings.WYRE_ACCOUNT_ID}" == response_data["source"]
+    assert response_data["id"] == transfer_id
 
 
 def test_get_transfer_by_id_unauthorized(mocker, make_wyre_api):
@@ -137,17 +137,17 @@ def test_create_transfer_success(mocker, make_wyre_api):
     }
 
     wyre_api = make_wyre_api()
-    response = wyre_api.create_transfer(transfer_data)
+    response_data = wyre_api.create_transfer(transfer_data)
 
     wyre_request_mock.assert_called_once_with(
         urljoin(wyre_api.API_URL, f"v3/transfers"), json=data
     )
 
-    assert response == wyre_request_mock.return_value.json()
-    assert response["source"] == f"account:{settings.WYRE_ACCOUNT_ID}"
-    assert response["destAmount"] == amount
-    assert response["dest"] == destination
-    assert response["destCurrency"] == currency == response["sourceCurrency"]
+    assert response_data == wyre_request_mock.return_value.json()
+    assert response_data["source"] == f"account:{settings.WYRE_ACCOUNT_ID}"
+    assert response_data["destAmount"] == amount
+    assert response_data["dest"] == destination
+    assert response_data["destCurrency"] == currency == response_data["sourceCurrency"]
 
 
 def test_create_transfer_bad_request(mocker, make_wyre_api):
