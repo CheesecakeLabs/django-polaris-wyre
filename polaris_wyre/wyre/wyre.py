@@ -20,7 +20,7 @@ class Wyre:
         response_data = self.wyre_api.get_account()
         return response_data["depositAddresses"]["XLM"].split(":")
 
-    def get_stellar_transaction_id(self, transfer_id) -> str:
+    def get_stellar_transaction_id(self, transfer_id: str) -> str:
         transfer_is_completed = False
         while not transfer_is_completed:
             response_data = self.wyre_api.get_transfer_by_id(transfer_id)
