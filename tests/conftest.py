@@ -72,7 +72,7 @@ def make_wyre() -> Callable:
     def _make_wyre(
         api_token: str = settings.WYRE_API_TOKEN,
         account_id: str = settings.WYRE_ACCOUNT_ID,
-    ) -> WyreAPI:
+    ) -> Wyre:
         return Wyre(api_token=api_token, account_id=account_id)
 
     return _make_wyre
