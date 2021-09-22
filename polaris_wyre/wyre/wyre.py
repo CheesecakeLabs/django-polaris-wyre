@@ -21,14 +21,13 @@ class Wyre:
         return response_data["depositAddresses"]["XLM"].split(":")
 
     def get_stellar_transaction_id(self, transfer_id: str) -> str:
-        transfer_is_completed = False
-        while not transfer_is_completed:
+        while True:
             response_data = self.wyre_api.get_transfer_by_id(transfer_id)
             if response_data["status"] == FAILED_STATUS:
                 # TODO: improve RuntimeError message with a better description
                 raise RuntimeError("Wyre failed to complete the transfer.")
             if response_data["status"] == COMPLETED_STATUS:
-                transfer_is_completed = True
+                break
         return response_data["blockchainTx"]["networkTxId"]
 
     def create_transfer(self, transfer_data: TransferData) -> dict:
