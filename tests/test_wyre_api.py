@@ -32,6 +32,7 @@ def test_get_account_success(mocker, make_wyre_api):
     )
 
     assert response_data == wyre_request_mock.return_value.json()
+    assert wyre_request_mock.return_value.status_code == status.HTTP_200_OK
     assert settings.WYRE_ACCOUNT_ID == response_data["id"]
 
 
@@ -57,6 +58,7 @@ def test_get_account_unauthorized(mocker, make_wyre_api):
         wyre_api.get_account()
 
     wyre_request_mock.assert_called_once_with(url)
+    assert wyre_request_mock.return_value.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_get_transfer_by_id_success(mocker, make_wyre_api):
@@ -76,6 +78,7 @@ def test_get_transfer_by_id_success(mocker, make_wyre_api):
     )
 
     assert response_data == wyre_request_mock.return_value.json()
+    assert wyre_request_mock.return_value.status_code == status.HTTP_200_OK
     assert f"account:{settings.WYRE_ACCOUNT_ID}" == response_data["source"]
     assert response_data["id"] == transfer_id
 
@@ -104,6 +107,7 @@ def test_get_transfer_by_id_unauthorized(mocker, make_wyre_api):
         wyre_api.get_transfer_by_id(transfer_id=transfer_id)
 
     wyre_request_mock.assert_called_once_with(url)
+    assert wyre_request_mock.return_value.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_create_transfer_success(mocker, make_wyre_api):
@@ -144,6 +148,7 @@ def test_create_transfer_success(mocker, make_wyre_api):
     )
 
     assert response_data == wyre_request_mock.return_value.json()
+    assert wyre_request_mock.return_value.status_code == status.HTTP_200_OK
     assert response_data["source"] == f"account:{settings.WYRE_ACCOUNT_ID}"
     assert response_data["destAmount"] == amount
     assert response_data["dest"] == destination
@@ -192,3 +197,4 @@ def test_create_transfer_bad_request(mocker, make_wyre_api):
         wyre_api.create_transfer(transfer_data)
 
     wyre_request_mock.assert_called_once_with(url, json=data)
+    assert wyre_request_mock.return_value.status_code == status.HTTP_400_BAD_REQUEST
