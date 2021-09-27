@@ -90,7 +90,7 @@ class WyreIntegration(CustodyIntegration):
             for the requested asset
         """
         amount = round(
-            Decimal(transaction.amount_in) - Decimal(transaction.amount_fee),
+            transaction.amount_in - transaction.amount_fee,
             transaction.asset.significant_decimals,
         )
         transfer_data = TransferData(
