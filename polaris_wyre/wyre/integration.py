@@ -1,9 +1,9 @@
 from decimal import Decimal
 
 from polaris import settings as polaris_settings
-from polaris_wyre.wyre.dtos import TransferData
 from polaris.models import Asset, Transaction
 from polaris.integrations import CustodyIntegration
+from polaris_wyre.wyre.dtos import TransferData
 from rest_framework.request import Request
 from stellar_sdk.server import Server
 
