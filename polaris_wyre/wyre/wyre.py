@@ -30,5 +30,6 @@ class Wyre:
                 break
         return response_data["blockchainTx"]["networkTxId"]
 
-    def create_transfer(self, transfer_data: TransferData) -> dict:
-        return self.wyre_api.create_transfer(transfer_data)
+    def create_transfer(self, transfer_data: TransferData) -> str:
+        response_data = self.wyre_api.create_transfer(transfer_data)
+        return response_data["id"]
