@@ -1,10 +1,6 @@
-from decimal import Decimal
-
 import pytest
 from django.conf import settings
-from stellar_sdk.keypair import Keypair
 
-from polaris_wyre.wyre.dtos import TransferData
 from .mocks import wyre as wyre_mocks
 
 
@@ -65,14 +61,8 @@ def test_get_stellar_transaction_id_runtime_error(mocker, make_wyre):
     wyre_api_mock.assert_called()
 
 
-def test_create_transfer(mocker, make_wyre):
-    currency = "USDC"
-    amount = Decimal("100")
-    destination = Keypair.random().public_key
-
-    transfer_data = TransferData(
-        currency=currency, amount=amount, destination=destination
-    )
+def test_create_transfer(mocker, make_wyre, make_transfer_data):
+    transfer_data = make_transfer_data()
 
     wyre_api_mock = mocker.patch(
         "polaris_wyre.wyre.api.WyreAPI.create_transfer",
@@ -85,8 +75,8 @@ def test_create_transfer(mocker, make_wyre):
     )
 
     wyre = make_wyre()
-    response_data = wyre.create_transfer(transfer_data)
+    transfer_id = wyre.create_transfer(transfer_data)
 
     wyre_api_mock.assert_called_with(transfer_data)
 
-    assert response_data == wyre_api_mock.return_value
+    assert transfer_id == wyre_api_mock.return_value.get("id")

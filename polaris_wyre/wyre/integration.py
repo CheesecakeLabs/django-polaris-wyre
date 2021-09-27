@@ -99,8 +99,8 @@ class WyreIntegration(CustodyIntegration):
             destination=f"stellar:{transaction.to_address}",
         )
 
-        response_data = self.wyre.create_transfer(transfer_data)
-        transaction_id = self.wyre.get_stellar_transaction_id(response_data["id"])
+        transfer_id = self.wyre.create_transfer(transfer_data)
+        transaction_id = self.wyre.get_stellar_transaction_id(transfer_id)
 
         with Server(horizon_url=polaris_settings.HORIZON_URI) as server:
             return server.transactions().transaction(transaction_id).call()
