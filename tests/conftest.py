@@ -1,10 +1,17 @@
+import secrets
+import string
+from decimal import Decimal
 from typing import Callable
 
 import django
 import pytest
 from stellar_sdk import Keypair
 
+from polaris_wyre.wyre import Wyre
 from polaris_wyre.wyre.api import WyreAPI
+from polaris_wyre.wyre.dtos import TransferData
+
+ALPHABET = string.ascii_uppercase + string.digits
 
 
 def pytest_configure(config):
@@ -56,3 +63,35 @@ def make_wyre_api() -> Callable:
         return WyreAPI(api_token=api_token, account_id=account_id)
 
     return _make_wyre_api
+
+
+@pytest.fixture
+def make_wyre() -> Callable:
+    from django.conf import settings
+
+    def _make_wyre(
+        api_token: str = settings.WYRE_API_TOKEN,
+        account_id: str = settings.WYRE_ACCOUNT_ID,
+    ) -> Wyre:
+        return Wyre(api_token=api_token, account_id=account_id)
+
+    return _make_wyre
+
+
+@pytest.fixture
+def make_wyre_xlm_address() -> str:
+    stellar_address = Keypair.random().public_key
+    user_id = "".join(secrets.choice(ALPHABET) for _ in range(11))
+    return f"{stellar_address}:{user_id}"
+
+
+@pytest.fixture
+def make_transfer_data() -> Callable:
+    def _make_transfer_data(
+        currency: str = "USDC",
+        amount: Decimal = Decimal("100"),
+        destination: str = f"stellar:{Keypair.random().public_key}",
+    ) -> TransferData:
+        return TransferData(currency=currency, amount=amount, destination=destination)
+
+    return _make_transfer_data

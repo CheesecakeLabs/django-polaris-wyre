@@ -1,16 +1,12 @@
-from decimal import Decimal
 from urllib.parse import urljoin
 
 import pytest
 from django.conf import settings
 from rest_framework import status
-from stellar_sdk import Keypair
 
 from polaris_wyre.helpers.exceptions import WyreAPIError
 from polaris_wyre.wyre.api import TEST_BASE_URL
-from polaris_wyre.wyre.dtos import TransferData
 from .mocks import wyre as wyre_mocks
-
 
 REQUEST_METHOD_GET_MOCK = "requests.Session.get"
 REQUEST_METHOD_POST_MOCK = "requests.Session.post"
@@ -110,34 +106,26 @@ def test_get_transfer_by_id_unauthorized(mocker, make_wyre_api):
     assert wyre_request_mock.return_value.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_create_transfer_success(mocker, make_wyre_api):
-    currency = "USDC"
-    amount = Decimal("10")
-    destination = f"stellar:{Keypair.random().public_key}"
-
-    transfer_data = TransferData.create_transfer_data(
-        currency=currency,
-        amount=amount,
-        destination=destination,
-    )
+def test_create_transfer_success(mocker, make_wyre_api, make_transfer_data):
+    transfer_data = make_transfer_data()
 
     wyre_request_mock = mocker.patch(
         REQUEST_METHOD_POST_MOCK,
         return_value=wyre_mocks.create_transfer_response(
             account_id=settings.WYRE_ACCOUNT_ID,
-            currency=currency,
-            amount=amount,
-            destination=destination,
+            currency=transfer_data.currency,
+            amount=transfer_data.amount,
+            destination=transfer_data.destination,
         ),
     )
 
     data = {
         "autoConfirm": True,
         "source": f"account:{settings.WYRE_ACCOUNT_ID}",
-        "sourceCurrency": currency,
-        "sourceAmount": str(amount),
-        "dest": destination,
-        "destCurrency": currency,
+        "sourceCurrency": transfer_data.currency,
+        "sourceAmount": str(transfer_data.amount),
+        "dest": transfer_data.destination,
+        "destCurrency": transfer_data.currency,
     }
 
     wyre_api = make_wyre_api()
@@ -150,29 +138,25 @@ def test_create_transfer_success(mocker, make_wyre_api):
     assert response_data == wyre_request_mock.return_value.json()
     assert wyre_request_mock.return_value.status_code == status.HTTP_200_OK
     assert response_data["source"] == f"account:{settings.WYRE_ACCOUNT_ID}"
-    assert response_data["destAmount"] == amount
-    assert response_data["dest"] == destination
-    assert response_data["destCurrency"] == currency == response_data["sourceCurrency"]
-
-
-def test_create_transfer_bad_request(mocker, make_wyre_api):
-    currency = "USDC"
-    amount = Decimal("10")
-    destination = f"stellar:{Keypair.random().public_key}"
-
-    transfer_data = TransferData.create_transfer_data(
-        currency=currency,
-        amount=amount,
-        destination=destination,
+    assert response_data["destAmount"] == transfer_data.amount
+    assert response_data["dest"] == transfer_data.destination
+    assert (
+        response_data["destCurrency"]
+        == transfer_data.currency
+        == response_data["sourceCurrency"]
     )
+
+
+def test_create_transfer_bad_request(mocker, make_wyre_api, make_transfer_data):
+    transfer_data = make_transfer_data()
 
     data = {
         "autoConfirm": True,
         "source": f"account:{settings.WYRE_ACCOUNT_ID}",
-        "sourceCurrency": currency,
-        "sourceAmount": str(amount),
-        "dest": destination,
-        "destCurrency": currency,
+        "sourceCurrency": transfer_data.currency,
+        "sourceAmount": str(transfer_data.amount),
+        "dest": transfer_data.destination,
+        "destCurrency": transfer_data.currency,
     }
 
     url = urljoin(TEST_BASE_URL, "v3/transfers")
@@ -180,9 +164,9 @@ def test_create_transfer_bad_request(mocker, make_wyre_api):
         REQUEST_METHOD_POST_MOCK,
         return_value=wyre_mocks.create_transfer_response(
             account_id=settings.WYRE_ACCOUNT_ID,
-            currency=currency,
-            amount=amount,
-            destination=destination,
+            currency=transfer_data.currency,
+            amount=transfer_data.amount,
+            destination=transfer_data.destination,
             status_code=status.HTTP_400_BAD_REQUEST,
             url=url,
             reason="Bad Request",
