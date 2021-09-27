@@ -39,7 +39,7 @@ class WyreIntegration(CustodyIntegration):
 
     def save_receiving_account_and_memo(
         self, request: Request, transaction: Transaction
-    ):
+    ) -> None:
         """
         Save the Stellar account that the client should use as the destination
         of the payment transaction to ``Transaction.receiving_anchor_account``,
