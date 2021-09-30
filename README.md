@@ -29,7 +29,7 @@ INSTALLED_APPS = [
 ```
 ## How to use
 
-To use the Wyre's wallet, it is necessary to import `WyreIntegration` class from `polaris_wyre.wyre.integration` package and pass it as an argument to the `custody` parameter in the Polaris' `register_integrations` function.
+To use the Wyre's wallet, it is necessary to import `WyreIntegration` class from `polaris_wyre.wyre.integration` package and pass an instance of it as the `custody` parameter in the Polaris' `register_integrations` function.
 
 ```py
 # apps.py
