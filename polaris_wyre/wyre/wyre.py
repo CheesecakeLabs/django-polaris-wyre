@@ -17,7 +17,7 @@ class Wyre:
 
     def get_account(self) -> Tuple[str, str]:
         """
-        Gets the Stellar account address from the Wyre's account information.
+        Gets the Stellar's account address from the Wyre's account information.
 
         :return: Returns a tuple containing the account data and the user id.
         """
@@ -26,7 +26,7 @@ class Wyre:
 
     def get_stellar_transaction_id(self, transfer_id: str) -> str:
         """
-        Gets the Stellar Network transaction id.
+        Gets the Stellar Network's transaction id.
 
         :param: The Wyre's transfer id.
         :return: Returns a string containing the Stellar Network transaction id.
