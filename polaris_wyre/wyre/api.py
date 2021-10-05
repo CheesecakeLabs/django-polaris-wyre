@@ -8,7 +8,6 @@ from .dtos import TransferData
 TEST_BASE_URL = "https://api.testwyre.com"
 
 
-# TODO: add methods description
 class WyreAPI:
     def __init__(
         self,
@@ -43,16 +42,34 @@ class WyreAPI:
         raise WyreAPIError(msg, response=response)
 
     def get_account(self) -> dict:
+        """
+        Gets the Wyre's account information.
+
+        :return: Returns a dict containing the account data.
+        """
         url = urljoin(self.API_URL, "v2/account")
         response = self.session.get(url)
         return self._handle_response(response)
 
     def get_transfer_by_id(self, transfer_id: str) -> dict:
+        """
+        Gets Wyre's transfer information by its id.
+
+        :param: The transfer id.
+        :return: Returns a dict containing the transfer data.
+        """
         url = urljoin(self.API_URL, f"v3/transfers/{transfer_id}")
         response = self.session.get(url)
         return self._handle_response(response)
 
     def create_transfer(self, transfer_data: TransferData) -> dict:
+        """
+        Builds a transfer based on the given transfer data.
+
+        :param: A :class:`TransferData` instance containing the transfer
+        information.
+        :return: Returns a dict containing the Wyre's transfer data.
+        """
         url = urljoin(self.API_URL, "v3/transfers")
         data = {
             "autoConfirm": True,
