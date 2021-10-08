@@ -68,3 +68,7 @@ The `WyreIntegration` class has the following parameters:
 - **account_id**: Your Wyre account id. You can find it by navigating to "Your Account" -> "Basic Info". Here, look above of your profile picture and you should see your `account_id`.
 
 After this you are ready to go.
+
+## Code example
+
+You can see an example of implementation [here](https://github.com/CheesecakeLabs/django-polaris-wyre-example).
