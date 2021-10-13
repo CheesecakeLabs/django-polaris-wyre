@@ -36,6 +36,12 @@ def pytest_configure(config):
             "django.contrib.staticfiles",
             "polaris",
         ),
+        DATABASES={
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": ":memory:",
+            },
+        },
     )
 
     # Polaris settings
@@ -76,6 +82,21 @@ def make_wyre() -> Callable:
         return Wyre(api_token=api_token, account_id=account_id)
 
     return _make_wyre
+
+
+@pytest.fixture
+def make_wyre_integration() -> Callable:
+    from django.conf import settings
+
+    from polaris_wyre.wyre.integration import WyreIntegration
+
+    def _make_wyre_integration(
+        api_token: str = settings.WYRE_API_TOKEN,
+        account_id: str = settings.WYRE_ACCOUNT_ID,
+    ) -> WyreIntegration:
+        return WyreIntegration(api_token=api_token, account_id=account_id)
+
+    return _make_wyre_integration
 
 
 @pytest.fixture
