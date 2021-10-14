@@ -61,7 +61,7 @@ def test_submit_deposit_transaction(
     transaction.amount_fee = 3
     transaction.to_address = destination_address
 
-    amount = amount = round(
+    amount = round(
         transaction.amount_in - transaction.amount_fee,
         asset.significant_decimals,
     )
