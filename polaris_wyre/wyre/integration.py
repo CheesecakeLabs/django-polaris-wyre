@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from polaris import settings as polaris_settings
 from polaris.models import Asset, Transaction
 from polaris.integrations import CustodyIntegration
